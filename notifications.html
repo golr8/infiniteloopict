@@ -1,0 +1,49 @@
+{%extends 'base.html' %}
+{% load static %}
+{%load humanize %}
+{% block style%} <link rel="stylesheet" href="{% static 'css/savings.css' %}">{%endblock%}
+{% block title%} Savings Notifications{%endblock%}
+ 
+
+
+{%block content%}
+<section class="notice">
+ {% include 'savings/savings-sidebar.html' %}
+ <div class="note">
+    <div class="toggle-div"> <button class="toggle" id="toggle">☰ Menu</button></div>
+    <br><br>
+    <h2>Notifications</h2>
+    {% if notifications %}
+    
+    {% for note in notifications %}
+        
+    <div class="note-div">
+        <img src="/static/images/logo.png" alt="" width="30px" height="30px">
+        <article>
+            <h3>New notification</h3>
+            <p>{{note.content}}</p>
+        </article>
+    </div>
+     
+    {% endfor %}
+        
+    {%else%}
+    <div style="padding: 50px; color: darkblue;" class="note-div">
+    <p>You have no new notifications</p></div>
+    {%endif%}
+ </div>
+</section>
+<script>
+    const sidebar = document.querySelector('.sidebar');
+    const toggleButton = document.querySelector('.toggle');
+    const closeButton = document.querySelector('.close-button');
+
+        toggleButton.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+
+        closeButton.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+        });
+</script>
+ {%endblock%}

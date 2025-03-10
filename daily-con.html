@@ -1,0 +1,143 @@
+{%extends 'base.html' %}
+{% load static %}
+{% block style%} <link rel="stylesheet" href="{% static 'css/savings.css' %}">{%endblock%}
+{% block title%} Savings Registration{%endblock%}
+
+
+{%block content%}
+<section class="registration">
+ {% include 'savings/savings-sidebar.html' %}
+ 
+ <div class="register">
+    <button class="toggle" id="toggle">☰ Menu</button>
+    <form action="{% url 'savings:daily_con' %}" method="POST" id="contributionForm">
+        {% csrf_token %}
+        <h2>Daily Contribution Plan</h2>
+        <p>With the rising cost (inflation) of food commodities,its time to increase your savings in food with Chenemona, to ensure an enjoyable festive period and end of the year.</p>
+        <label for="package">Choose a Package:</label>
+        <select name="package" id="package" required>
+            <option value="" disabled selected>Select a package</option>
+            <!-- ME ALONE PACKAGE -->
+            <optgroup label="ME ALONE PACKAGE">
+                <option value="150_mealone" data-amount="150">N150 Daily </option>
+                <option value="200_mealone" data-amount="200">N200 Daily </option>
+                <option value="250_mealone" data-amount="250">N250 Daily </option>
+                <option value="300_mealone" data-amount="300">N300 Daily </option>
+                <option value="350A_mealone" data-amount="350">N350 A Daily </option>
+                <option value="350B_mealone" data-amount="350">N350 B Daily </option>
+                <option value="550_mealone" data-amount="550">N550 Daily </option>
+                <option value="600_mealone" data-amount="600">N600 Daily </option>
+                <option value="1000_mealone" data-amount="1000">N1000 Daily </option>
+                <option value="1000_woto" data-amount="1000">Woto Woto Package (N1000 Daily) </option>
+                <option value="600_combo" data-amount="600">Combo Package (N600 Daily) </option>
+                <option value="1000_extra" data-amount="1000">Extra Cool Package (N1,000 Daily) </option>
+            </optgroup>
+            
+            <optgroup label="Provision Packages">
+                <option value="200_provision" data-amount="200">N200 Daily </option>
+                <option value="150_provision" data-amount="150">N150 Daily </option>
+            </optgroup>
+            
+            <optgroup label="Kitchen Utensils">
+                <option value="130_burner" data-amount="130">N130 Daily - Table burner (Double burner)</option>
+                <option value="150_cylinder12" data-amount="150">N150 Daily - Gas cylinder (12.5kg)</option>
+                <option value="130_cylinder8" data-amount="130">N130 Daily - Gas cylinder (8kg)</option>
+                <option value="120_cylinder6" data-amount="120">N120 Daily - Gas cylinder (6kg)</option>
+                <option value="130_pots5" data-amount="130">N130 Daily - Set 5 pots</option>
+                <option value="170_pots3" data-amount="170">N170 Daily - Set 3 Occasion pots</option>
+                <option value="120_cooler45" data-amount="120">N120 Daily - Cooler size 45</option>
+                <option value="80_cooler35" data-amount="80">N80 Daily - Cooler size 35</option>
+                <option value="50_cooler20" data-amount="50">N50 Daily - Cooler size 20</option>
+                <option value="120_coolerplates" data-amount="120">N120 Daily - Set 3 Cooler plates + Set 2 Cooler plates</option>
+                <option value="120_kettle" data-amount="120">N120 Daily - Stainless steel kettle</option>
+            </optgroup>
+   
+            <optgroup label="Electronics">
+                <option value="850_tv32" data-amount="850">N850 Daily - Smart TV 32 inches</option>
+                <option value="750_ledtv32" data-amount="750">N750 Daily - LED TV 32 inches</option>
+                <option value="1000_tv43" data-amount="1000">N1,000 Daily - Smart TV 43 inches</option>
+                <option value="850_ledtv43" data-amount="850">N850 Daily - LED TV 43 inches</option>
+                <option value="200_hometheater" data-amount="200">N200 Daily - Home Theater</option>
+                <option value="350_standingfan" data-amount="350">N350 Daily - Rechargeable Standing Fan</option>
+                <option value="250_tablefan" data-amount="250">N250 Daily - Rechargeable Table Fan</option>
+                <option value="400_industrialfan" data-amount="400">N400 Daily - Industrial Standing Fan</option>
+                <option value="1600_freezer" data-amount="1600">N1,600 Daily - Freezer (200 liters)</option>
+                <option value="600_washer" data-amount="600">N600 Daily - Washing Machine (6kg)</option>
+            </optgroup>
+
+            <optgroup label="Special Package">
+                <option value="11500_keke" data-amount="11500">N11,500 Daily - TVC tricycle (Keke)</option>
+            </optgroup>
+
+        </select>
+
+      
+      <label for="daily_savings_goal">Daily Amount (Naira):</label>
+      <input type="number" id="daily_savings_goal" name="daily_savings_goal" readonly>
+      <button type="button" onclick="submitContributionForm()">Start Plan</button>
+    </form>
+        
+
+ </div>
+    
+</section>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    const sidebar = document.querySelector('.sidebar');
+    const toggleButton = document.querySelector('.toggle');
+    const closeButton = document.querySelector('.close-button');
+
+        toggleButton.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+
+        closeButton.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+        });
+
+        document.getElementById('package').addEventListener('change', function () {
+    const selectedOption = this.options[this.selectedIndex];
+    const amount = selectedOption.getAttribute('data-amount'); // Get the amount from data-attribute
+    document.getElementById('daily_savings_goal').value = amount; // Update the amount display
+});
+
+        function submitContributionForm() {
+    const form = document.getElementById('contributionForm');
+    const formData = new FormData(form);
+
+    fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': form.csrfmiddlewaretoken.value
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            Swal.fire({
+                title: "Success!",
+                text: data.message,
+                icon: "success"
+            }).then(() => {
+                // Redirect after the alert is closed
+                window.location.href = "{% url 'savings:dashboard' %}";
+            });
+        } else {
+            Swal.fire({
+                title: "Error",
+                text: "There was an issue creating the savings plan.",
+                icon: "error"
+            });
+        }
+    })
+    .catch(error => {
+        Swal.fire({
+            title: "Error",
+            text: "An error occurred. Please try again.",
+            icon: "error"
+        });
+    });
+}
+</script>
+{%endblock%}

@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block style %} 
+<link rel="stylesheet" href="{% static 'css/savings.css' %}">
+{% endblock %}
+{% block title %} Savings Deposit {% endblock %}
+
+{% block content %}
+<section class="deposit-page">
+    {% include 'savings/savings-sidebar.html' %}
+    <div class="deposit">
+        <div class="toggle-div">
+            <button class="toggle" id="toggle">☰ Menu</button>
+        </div>
+        <form action="{% url 'savings:savings_deposit' savings.id %}" method="POST" id="depositForm">
+            {% csrf_token %}
+            {% if savings %}
+                <h2>Daily Savings Deposit</h2>
+                <p><strong>Account Number:</strong> 5658510564</p>
+                <p><strong> Bank:</strong> MoniePoint MFB </p>
+                <p><strong> Name:</strong> CHENEMONA GLOBAL RESOURCES LTD - CHENEMONA GLOBAL RESOURCES</p>
+                <p>Your daily savings goal is ₦{{ savings.daily_savings_goal }}</p>
+                <p><strong>Note: You must use your I.D in transaction description.</strong></p>
+                <p> <strong>Your user I.D: CH000{{request.user.id}}.</strong></p>
+                <p>After 45 minutes your transaction will be verified.</p>
+                
+        
+                <label for="amount">Amount:</label>
+                <input type="number" placeholder="Amount" name="amount" id="amount" min="{{ savings.daily_savings_goal }}" required>
+        
+                <label for="depositDays">Deposit days:</label>
+                <input type="number" placeholder="Days" name="deposit_days" id="depositDays" min="1" max="100" required>
+        
+                <p id="calculatedAmount">Minimum required amount: ₦{{ savings.daily_savings_goal }}</p>
+                <button type="submit">Deposit</button>
+            {% endif %}
+        </form>
+        
+    </div>
+</section>
+<!-- <script src="https://js.paystack.co/v2/inline.js"> </script> -->
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const sidebar = document.querySelector('.sidebar');
+    const toggleButton = document.querySelector('.toggle');
+    const closeButton = document.querySelector('.close-button');
+    const depositForm = document.getElementById('depositForm');
+    const dailyGoal = {{ savings.daily_savings_goal|safe }};
+    const depositDaysInput = document.getElementById('depositDays');
+    const amountInput = document.getElementById('amount');
+    const calculatedAmountDisplay = document.getElementById('calculatedAmount');
+
+    // Sidebar toggle functionality
+    toggleButton.addEventListener('click', () => {
+        sidebar.classList.toggle('active');
+    });
+
+    closeButton?.addEventListener('click', () => {
+        sidebar.classList.remove('active');
+    });
+
+    // Update amount based on deposit days
+    function updateAmount() {
+        let selectedDays = parseInt(depositDaysInput.value) || 1;
+
+        // Restrict value between 1 and 100
+        if (selectedDays < 1) {
+            depositDaysInput.value = 1;
+            selectedDays = 1;
+        } else if (selectedDays > 100) {
+            depositDaysInput.value = 100;
+            selectedDays = 100;
+        }
+
+        const requiredAmount = dailyGoal * selectedDays;
+        calculatedAmountDisplay.textContent = `Minimum required amount: ₦${requiredAmount.toFixed(2)}`;
+        amountInput.min = requiredAmount;
+        amountInput.value = requiredAmount;
+    }
+
+    depositDaysInput.addEventListener('input', updateAmount);
+    console.log(depositDaysInput)
+    updateAmount();
+
+    // // Handle form submission
+    // depositForm.addEventListener('submit', function (event) {
+    //     event.preventDefault();
+
+    //     const email = "{{ request.user.email }}";
+    //     const depositDays = parseInt(depositDaysInput.value) || 1;
+    //     const rawAmount = parseInt(amountInput.value) || 0;
+    //     const amount = rawAmount * 100; // Convert to kobo
+
+    //     // Perform validations
+    //     if (depositDays < 1 || depositDays > 100) {
+    //         alert('Deposit days must be between 1 and 100.');
+    //         return;
+    //     }
+    //     if (rawAmount < dailyGoal * depositDays) {
+    //         alert(`Amount must be at least ₦${(dailyGoal * depositDays).toFixed(2)}.`);
+    //         return;
+    //     }
+
+    //     // Initiate Paystack payment
+    //     // payWithPaystack(email, amount, depositDays);
+    // });
+
+       
+//     function payWithPaystack(email, amount, depositDays) {
+//     const handler = new PaystackPop();
+//     handler.checkout({
+//         key: 'pk_test_0eb471b79a27164c83ffdeb900da040e01981210', // Replace with your Paystack public key
+//         email: email,
+//         amount: amount, // Amount in kobo
+//         currency: 'NGN',
+//         ref: `DS_${Math.floor(Math.random() * 1000000000 + 1)}`, // Unique reference
+//         onSuccess: (transaction) => {
+//             verifyTransaction(transaction.reference, amount, depositDays);
+//         },
+//         onLoad: (response) => {
+//             console.log("onLoad: ", response);
+//         },
+//         onCancel: () => {
+//             alert('Transaction was not completed.');
+//         },
+//         onError: (error) => {
+//             console.log("Error: ", error.message);
+//         }
+//     });
+// }
+
+
+//     function verifyTransaction(reference, amount, depositDays) {
+//         fetch("{% url 'savings:verify_transaction' %}", {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//                 'X-CSRFToken': '{{ csrf_token }}',
+//             },
+//             body: JSON.stringify({
+//                 reference: reference,
+//                 amount: amount / 100, // Convert back to naira for server-side processing
+//                 deposit_days: depositDays,
+//             })
+//         })
+//         .then(response => response.json())
+//         .then(data => {
+//             if (data.success) {
+//                 alert('Deposit successful!');
+//                 window.location.href = "{% url 'savings:dashboard' %}"; 
+//             } else {
+//                 alert(data.message);
+//             }
+//         })
+//         .catch(error => {
+//             console.error('Error:', error);
+//             alert('An error occurred. Please try again.');
+//         });
+// }
+ });
+
+</script>
+{% endblock %}

@@ -1,0 +1,133 @@
+{%extends 'base.html' %}
+{% load static %}
+{%load humanize %}
+{% block style%} <link rel="stylesheet" href="{% static 'css/savings.css' %}">{%endblock%}
+{% block title%} Savings Withdrawal{%endblock%}
+ 
+
+{%block content%}
+<section class="withdrawal">
+ {% include 'savings/savings-sidebar.html' %}
+ <div class="withdraw">
+    <div class="toggle-div"> <button class="toggle" id="toggle">☰ Menu</button></div>
+    <div class="balance">
+        <p>Total Savings</p>
+        <h2>&#8358;{{ total_balance|floatformat:0|intcomma}} </h2>
+        <strong>Your user I.D: CH000{{request.user.id}}</strong>
+    </div>
+    <form action="{% url 'savings:withdrawal' %}" method="POST" id="withdrawForm">
+        {% csrf_token %}
+        <h3> Add bank details</h3>
+        <div class="details">
+        <div>
+        <label for="plan">Plan:</label>
+        <select name="plan" id="plan" required>
+            <option disabled>Choose Plan</option>
+            <option value="daily_savings">Daily Savings</option>
+            <option value="daily_contribution">Daily Contribution</option>
+        </select>
+        <label for="amount">How much to withdraw?</label>
+        <input type="number" name="amount" id="amount" placeholder="Amount" required>
+        </div>
+        <div>
+        <label for="bank">Bank name:</label>
+        <select name="bank" id="bank" required>
+            <option disabled>Choose Bank</option>
+            <option value="Access Bank Plc">Access Bank Plc</option>
+            <option value="Accion Microfinance Bank">Accion Microfinance Bank</option>
+            <option value="Citibank Nigeria Limited">Citibank Nigeria Limited</option>
+            <option value="Ecobank Nigeria">Ecobank Nigeria</option>
+            <option value="FairMoney Microfinance Bank">FairMoney Microfinance Bank</option>
+            <option value="Fidelity Bank Plc">Fidelity Bank Plc</option>
+            <option value="First Bank of Nigeria Limited">First Bank of Nigeria Limited</option>
+            <option value="First City Monument Bank Limited">First City Monument Bank Limited</option>
+            <option value="Guaranty Trust Holding Company Plc">Guaranty Trust Holding Company Plc</option>
+            <option value="Heritage Bank">Heritage Bank</option>
+            <option value="Keystone Bank Limited">Keystone Bank Limited</option>
+            <option value="Kuda Bank">Kuda Bank</option>
+            <option value="Keystone Bank Limited">Keystone Bank Limited</option>
+            <option value="Moniepoint Microfinance Bank">Moniepoint Microfinance Bank</option>
+            <option value="Opay">Opay</option>
+            <option value="Palmpay">Palmpay</option>
+            <option value="Polaris Bank Limited">Polaris Bank Limited</option>
+            <option value="Stanbic IBTC Bank Plc">Stanbic IBTC Bank Plc</option>
+            <option value="Standard Chartered">Standard Chartered</option>
+            <option value="Sterling Bank Plc">Sterling Bank Plc</option>
+            <option value="Union Bank of Nigeria Plc">Union Bank of Nigeria Plc</option>
+            <option value="United Bank for Africa Plc">United Bank for Africa Plc</option>
+            <option value="Unity Bank Plc">Unity Bank Plc</option>
+            <option value="Wema Bank Plc">Wema Bank Plc</option>
+            <option value="Zenith Bank Plc">Zenith Bank Plc</option>
+        </select>
+        <label for="acc_no">Account number:</label>
+        <input type="number" name="acc_no" id="acc_no" placeholder="Account number" required>
+        </div>
+        </div>
+        <span class="btn-con"><button type="button" onclick="submitWithdrawForm()">Withdraw</button></span>
+    </form>
+    
+
+ </div>
+</section>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    const sidebar = document.querySelector('.sidebar');
+    const toggleButton = document.querySelector('.toggle');
+    const closeButton = document.querySelector('.close-button');
+
+        toggleButton.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+
+        closeButton.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+        });
+
+        function submitWithdrawForm() {
+    const amountInput = document.getElementById('amount');
+    const amount = parseFloat(amountInput.value);
+    const balance = parseFloat('{{ total_balance }}');
+
+    // Check if amount exceeds balance
+    if (amount > balance) {
+        alert("Insufficient balance");
+        return;  // Stop further execution if balance is insufficient
+    }
+
+    const form = document.getElementById('withdrawForm');
+    const formData = new FormData(form);
+
+    fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': form.csrfmiddlewaretoken.value
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            Swal.fire({
+                title: "Success!",
+                text: data.message,
+                icon: "success"
+            });
+        } else {
+            Swal.fire({
+                title: "Error",
+                text: data.message,
+                icon: "error"
+            });
+        }
+    })
+    .catch(error => {
+        Swal.fire({
+            title: "Error",
+            text: "An error occurred. Please try again.",
+            icon: "error"
+        });
+    });
+}
+</script>
+
+ {%endblock%}

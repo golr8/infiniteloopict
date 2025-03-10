@@ -1,0 +1,79 @@
+{%extends 'base.html' %}
+{% load static %}
+{% block style%} <link rel="stylesheet" href="{% static 'css/savings.css' %}">{%endblock%}
+{% block title%} Savings Transactions{%endblock%}
+
+
+{%block content%}
+<section class="transactions">
+ {% include 'savings/savings-sidebar.html' %}
+ <div class="records">
+    <div class="toggle-div"> <button class="toggle" id="toggle">☰ Menu</button></div> 
+   <div class="centre"> <h2>Transaction History</h2></div>
+
+    <div class="history">
+        <div><h3>Daily Savings History</h3>
+    <table>
+        <th>Plan</th>
+        <th>Amount</th>
+        <th>Date</th>
+        {% for record in sav_deposits  %}
+        <tr>
+            <td>{{record.daily_savings.daily_savings_goal}}</td>
+            <td>&#8358;{{record.amount}}</td>
+            <td>{{record.deposit_date}}</td>
+        </tr>
+        {%endfor%}
+    </table>
+        </div>
+
+ <div>            
+    <h3>Daily Contribution History</h3>
+    <table>
+        <th>Plan</th>
+        <th>Amount</th>
+        <th>Date</th>
+        {% for record in con_deposits  %}
+        <tr>
+            <td>{{record.daily_contribution.daily_savings_goal}}</td>
+            <td>&#8358;{{record.amount}}</td>
+            <td>{{record.deposit_date}}</td>
+        </tr>
+        {%endfor%}
+    </table>
+        </div>
+
+
+    <div>
+        <h3>Withdrawal History</h3>   
+    <table>
+        <th>Amount</th>
+        <th>Date</th>
+        <th>Success</th>
+        {% for record in withdrawals  %}
+        <tr>
+            <td>{{ record.amount}} </td>
+            <td>{{record.date }}</td>
+            <td>{{ record.success}} </td>
+        </tr>
+        {% endfor %}
+            
+    </table>
+    </div>
+    </div>
+ </div>
+</section>
+<script>
+    const sidebar = document.querySelector('.sidebar');
+    const toggleButton = document.querySelector('.toggle');
+    const closeButton = document.querySelector('.close-button');
+
+        toggleButton.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+
+        closeButton.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+        });
+</script>
+ {%endblock%}

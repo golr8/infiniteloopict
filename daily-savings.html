@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block style %} <link rel="stylesheet" href="{% static 'css/savings.css' %}">{% endblock %}
+{% block title %} Savings Registration{% endblock %}
+
+{% block content %}
+<section class="registration">
+ {% include 'savings/savings-sidebar.html' %} 
+ <div class="register">
+    <button class="toggle" id="toggle">☰ Menu</button>
+    <form action="{% url 'savings:daily_savings' %}" method="POST" id="savingsForm">
+        {% csrf_token %}
+        <h2>Daily Savings Plan</h2>
+        <p>Saving money is one of the essential aspects of building wealth and securing your financial future. It offers a way out of life's uncertainties and provides the opportunity to enjoy a higher quality of life.</p>
+        <select name="package" id=""> 
+            <option disabled>Months</option>
+            <option value="1 Month">1 Month (No interest)</option>
+            <option value="4 Months">4 Months (4% interest)</option>
+            <option value="6 Months">6 Months (6% interest)</option>
+            <option value="12 Months">12 Months (9% interest)</option>
+        </select>
+        <input type="number" id="daily_savings_goal" name="daily_savings_goal" placeholder="Daily Amount">
+        <button type="button" onclick="submitSavingsForm()">Start Plan</button>
+        <p id="error" style="color: red; display: none;">The amount must be at least 100</p>
+    </form>
+ </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    const sidebar = document.querySelector('.sidebar');
+    const toggleButton = document.querySelector('.toggle');
+    const closeButton = document.querySelector('.close-button');
+
+    toggleButton.addEventListener('click', () => {
+        sidebar.classList.toggle('active');
+    });
+
+    closeButton.addEventListener('click', () => {
+        sidebar.classList.remove('active');
+    });
+
+    function submitSavingsForm() {
+        const form = document.getElementById('savingsForm');
+        const amount = document.getElementById('daily_savings_goal');
+        const minAmount = 100;
+        const errorElement = document.getElementById('error');
+
+        // Perform validation
+        if (amount.value < minAmount) {
+            errorElement.style.display = 'block';
+            amount.value = minAmount; 
+            amount.focus();
+            return; // Stop form submission
+        } else {
+            errorElement.style.display = 'none';
+        }
+
+        const formData = new FormData(form);
+
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': form.csrfmiddlewaretoken.value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                Swal.fire({
+                    title: "Success!",
+                    text: data.message,
+                    icon: "success"
+                }).then(() => {
+                    // Redirect after the alert is closed
+                    window.location.href = "{% url 'savings:dashboard' %}";
+                });
+            } else {
+                Swal.fire({
+                    title: "Error",
+                    text: "There was an issue creating the savings plan.",
+                    icon: "error"
+                });
+            }
+        })
+        .catch(error => {
+            Swal.fire({
+                title: "Error",
+                text: "An error occurred. Please try again.",
+                icon: "error"
+            });
+        });
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,74 @@
+<form id="paymentForm">
+    {%csrf_token%}
+<label for="amount">Amount:</label>
+<input type="number" placeholder="Amount" name="amount" id="amount" required>
+
+<label for="depositDays">Deposit days:</label>
+<input type="number" placeholder="Days" name="deposit_days" id="depositDays" min="1" max="100" required>
+<input type="hidden" id="email" name="email" value="{{ email }}">
+<p id="calculatedAmount">Minimum required amount: ₦100, {{email}}</p>
+<button type="submit" >Pay</button>
+</form>
+
+
+
+<script src="https://js.paystack.co/v1/inline.js"> </script>
+<script>
+ 
+    const paymentForm = document.getElementById('paymentForm');
+    
+    paymentForm.addEventListener('submit', function(e) {
+        e.preventDefault(); // Prevent form from submitting traditionally
+
+        // Get and validate form data
+        const email = document.getElementById('email').value;
+        const rawAmount = document.getElementById('amount').value;
+        const amount = parseInt(rawAmount, 10) * 100; // Convert to kobo
+
+        if (isNaN(amount) || amount <= 0) {
+            alert('Please enter a valid amount.');
+            return;
+        }
+
+        // Initiate Paystack payment
+        payWithPaystack(email, amount);
+    });
+
+    function payWithPaystack(email, amount) {
+        let handler = PaystackPop.setup({
+            key: 'pk_test_0eb471b79a27164c83ffdeb900da040e01981210', // Replace with your Paystack public key
+            email: email, // Customer email from form
+            amount: amount, // Amount in kobo
+            currency: 'NGN',
+            ref: 'TXN_' + Math.floor((Math.random() * 1000000000) + 1), // Unique reference
+            callback: function(response) {
+                alert('Payment successful! Transaction reference: ' + response.reference);
+                // Optionally send the transaction reference to your server for verification
+                window.location.href = '/payment-success?reference=' + response.reference;
+            },
+            onClose: function() {
+                alert('Transaction was not completed, window closed.');
+            }
+        });
+        handler.openIframe();
+    }
+
+
+    document.getElementById('savingsForm').addEventListener('submit',function(event){
+        const amount = document.getElementById('daily_savings_goal');
+        const minAmount= 100;
+        const errorElement = document.getElementById('error')
+        if(amount.value < minAmount){
+            event.preventDefault();
+            errorElement.style.display='block';
+            amount.value = minAmount;
+            amount.focus();
+        }else{
+            errorElement.style.display = 'none';
+        }
+
+    });
+</script>
+<script>
+ 
+</script>

@@ -1,0 +1,226 @@
+{%extends 'base.html' %}
+{% load static %}
+{% block style%} <link rel="stylesheet" href="{% static 'css/savings.css' %}">{%endblock%}
+{% block title%} Savings Plans{%endblock%}
+
+
+{%block content%}
+
+<section class="plans">
+ {% include 'savings/savings-sidebar.html' %}
+    <div class="options">
+        <div class="toggle-div"> <button class="toggle" id="toggle">☰ Menu</button></div>
+        <br>
+        <h2>Saving Plans</h2>
+
+        <div class="div-con">
+        <div class="div">
+            <img src="{% static 'images/lg1.jpg' %}" alt="" width="90px" height="15px">
+            <h3>Daily Savings</h3>
+            <p>Saving money is one of the essential aspects of building wealth and securing your financial future. It offers a way out of life's uncertainties and provides the opportunity to enjoy a higher quality of life. Why not save with interest today for a future where you can achieve that project you've always dreamed of?</p>
+            <button onclick="toggleContent()" id="toggleButton">See More &dArr;</button>
+        </div> 
+        <div class="more-content" id="moreContent">
+            <article>
+            <h3>Daily Savings Interest rate</h3>
+            <p>Save any amount of your choice, but one day will be deducted upon withdrawal. Note: You can withdraw at will. </p>
+            <table class="table">
+                <th>Package</th>
+                <th>4 Months(4%)</th>
+                <th>6 Months(6%)</th>
+                <th>12 Months(9%)</th>
+
+                <tr>
+                    <td>100</td>
+                    <td>12,900</td>
+                    <td>19,720</td>
+                    <td>40,548</td>
+                </tr>
+                <tr>
+                    <td>150</td>
+                    <td>19,350</td>
+                    <td>29,596</td>
+                    <td>60,822</td>
+                </tr>
+                <tr>
+                    <td>200</td>
+                    <td>25,790</td>
+                    <td>39,432</td>
+                    <td>81,100</td>
+                </tr>
+                <tr>
+                    <td>250</td>
+                    <td>32,240</td>
+                    <td>49,290</td>
+                    <td>101,370</td>
+                </tr>
+                <tr>
+                    <td>300</td>
+                    <td>38,690</td>
+                    <td>59,148</td>
+                    <td>121,640</td>
+                </tr>
+                <tr>
+                    <td>400</td>
+                    <td>51,580</td>
+                    <td>78,864</td>
+                    <td>162,190</td>
+                </tr>
+                <tr>
+                    <td>500</td>
+                    <td>64,480</td>
+                    <td>98,580</td>
+                    <td>202,740</td>
+                </tr>
+                <tr>
+                    <td>1000</td>
+                    <td>128,960</td>
+                    <td>197,160</td>
+                    <td>405,480</td>
+                </tr>
+                <tr>
+                    <td>2000</td>
+                    <td>257,920</td>
+                    <td>394,320</td>
+                    <td>810,960</td>
+                </tr>
+                <tr>
+                    <td>5000</td>
+                    <td>644,800</td>
+                    <td>985,800</td>
+                    <td>2,027,400</td>
+                </tr>
+                
+            </table>
+            </article>
+            
+            
+            <a href="{% url 'savings:daily_savings' %}"><button>Choose plan</button></a>
+             
+        </div>
+        </div>
+
+        <div class="div-con">
+        <div class="div">
+            <img src="{% static 'images/lg1.jpg' %}" alt="" width="90px" height="15px">
+            <h3>Daily Contribution</h3>
+            <p>
+We aim to simplify healthier choices for our customers by providing a diverse range of food products and services that promote good nutrition. Our belief is that good food leads to a good mood.</p>
+            <button onclick="toggleContent2()" id="toggleButton2">See More &dArr;</button>
+        </div>
+        <div class="more-content" id="moreContent2">
+            <article>
+                <section>
+                    <h2>Packages</h2> 
+                    <ul>
+                        <li>
+                            <strong>ME ALONE PACKAGE</strong>
+                            <ul>
+                                <li><strong>N150 Daily</strong>: 10kg of Rice, ½ Carton of Sachet tomatoes, 2 liters of Groundnut oil, 1 bottle of Red Oil, 1kg of Frozen Chicken, ½ Basin of Garri, ½ Custard of beans, Magi, Salt</li>
+                                <li><strong>N200 Daily</strong>: ½ Bag of rice, ½ Carton of tomatoes, 2 liters of Groundnut oil, ½ Basin of Garri</li>
+                                <li><strong>N250 Daily</strong>: ½ Bag of rice, Live chicken, 2 liters of Groundnut oil, ½ Carton of sachet tomatoes, 1 Big ragolice bottle of Red oil, Maggi, Salt</li>
+                                <li><strong>N300 Daily</strong>: ½ Bag of rice, ½ Carton of tomatoes, 2 liters of Groundnut oil, ½ Custard of egusi, 5 cups of Ogbonor, Maggi, Salt, Curry/Thyme</li>
+                                <li><strong>N350 A Daily</strong>: 1 bag of rice, ½ Carton of tomatoes, 2 liters of Groundnut oil, Maggi, Salt, Curry/Thyme</li>
+                                <li><strong>N350 B Daily</strong>: ½ Bag of rice, ½ Basin of Garri, 1 Custard of beans, ½ Custard of crayfish, ½ Custard of Egusi, 3 cups of Ogbonor, Live chicken, 2 liters of Groundnut oil, 1 Ragolice bottle of Red oil, Maggi, Salt, Curry/Thyme</li>
+                                <li><strong>N550 Daily</strong>: Full bag of rice, Live chicken, ½ Basin of Garri, 1 Custard of beans, ½ Custard of crayfish, 3 liters of Groundnut oil, 2 Ragolice bottles of Red oil, 4 cups of Ogbonor, 1 Carton of sachet tomatoes, Maggi, Salt, Curry/Thyme</li>
+                                <li><strong>N600 Daily</strong>: 1 Bag of rice, 3 liters of Groundnut oil, ½ Basin of Garri, 1 Custard of beans, Stockfish, ½ Custard of Egusi, 5 Cups of Ogbonor, ½ Custard of onions, Small yellow custard of grinded pepper</li>
+                                <li><strong>N1000 Daily</strong>: Cash of N50,000, Full bag of rice, 3 liters of Groundnut oil, Live chicken, Basin of Garri, 1 Custard of beans, ½ Custard of Egusi, ½ Custard of Ogbonor, 1 Carton of Indomie, 1 Custard crayfish, Maggi, Salt, Curry/Thyme</li>
+                                <li><strong>Woto Woto Package (N1000 Daily)</strong>: 2 Bags of rice, 3 liters of Groundnut oil, 1 Carton of sachet tomatoes, Live chicken, 1 Custard of Egusi, ½ Custard of Ogbonor, Maggi, Salt, Curry/Thyme</li>
+                                <li><strong>Combo Package (N600 Daily)</strong>: 1 Bag of rice, Live chicken, 1 Carton of sachet tomatoes, 1 Crate of malt, 2 liters of Groundnut oil, 1 Carton of Indomie, 1 Basin of Garri, Milk (750g), Milo (750g)</li>
+                                <li><strong>Extra Cool Package (N1,000 Daily)</strong>: Cash of N180,000, 1 Full bag of rice, Live chicken, 1 Carton of tomatoes, 1 Carton of Indomie, 3 liters of Groundnut oil, Maggi, Salt, Curry/Thyme</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Provision Packages</strong>
+                            <ul>
+                                <li><strong>Provision N200 Daily</strong>: 1 Crate of malt, 1 Crate of egg, 1 Carton of Indomie, Milo (750g), Milk (750g), Golden Morn, Butter, Sugar, Detergent, Liquid soap, Toothpaste, Custard, 2 Sardines, 1 Packet of Biscuit, Bama, Sweet corn</li>
+                                <li><strong>Provision N150 Daily</strong>: ½ Crate of malt, ½ Crate of egg, 1 Carton of Indomie, Milo (750g), Milk (750g), Packet of Sugar, Liquid Soap, Detergent, Custard, 2 Sardines</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Kitchen Utensils</strong>
+                            <ul>
+                                <li><strong>Table burner (Double burner)</strong>: N130 Daily</li>
+                                <li><strong>Gas cylinder (12.5kg)</strong>: N150 Daily</li>
+                                <li><strong>Gas cylinder (8kg)</strong>: N130 Daily</li>
+                                <li><strong>Gas cylinder (6kg)</strong>: N120 Daily</li>
+                                <li><strong>Set 5 pots</strong>: N130 Daily</li>
+                                <li><strong>Set 3 Occasion pots</strong>: N170 Daily</li>
+                                <li><strong>Cooler size 45</strong>: N120 Daily</li>
+                                <li><strong>Cooler size 35</strong>: N80 Daily</li>
+                                <li><strong>Cooler size 20</strong>: N50 Daily</li>
+                                <li><strong>Set 3 Cooler plates + Set 2 Cooler plates</strong>: N120 Daily</li>
+                                <li><strong>Stainless steel kettle, Set 2 of cooler plates, 6 pieces gold eating spoon, 2 in 1 stainless cup.</strong>: N120 Daily</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Electronics</strong>
+                            <ul>
+                                <li><strong>Smart TV 32 inches</strong>: N850 Daily</li>
+                                <li><strong>LED TV 32 inches</strong>: N750 Daily</li>
+                                <li><strong>Smart TV 43 inches</strong>: N1,000 Daily</li>
+                                <li><strong>LED TV 43 inches</strong>: N850 Daily</li>
+                                <li><strong>Home Theater</strong>: N200 Daily</li>
+                                <li><strong>Rechargeable Standing Fan</strong>: N350 Daily</li>
+                                <li><strong>Rechargeable Table Fan</strong>: N250 Daily</li>
+                                <li><strong>Industrial Standing Fan</strong>: N400 Daily</li>
+                                <li><strong>Freezer (200 liters)</strong>: N1,600 Daily</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Special Package</strong>: TVC tricycle (Keke): N11,500 Daily
+                        </li>
+                        <li>
+                            <strong>Washing Machine</strong>: (6kg): N600 Daily
+                        </li>
+                    </ul>
+                </section>
+                
+                </article>
+           
+          <a href="{% url 'savings:daily_con' %}"><button>Choose plan</button></a>
+          
+        </div>
+        </div>
+    </div>
+</section>
+<script>
+    const sidebar = document.querySelector('.sidebar');
+    const toggleButton = document.querySelector('.toggle');
+    const closeButton = document.querySelector('.close-button');
+
+        toggleButton.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+
+        closeButton.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+        });
+
+        function toggleContent() {
+  const moreContent = document.getElementById("moreContent");
+  const toggleButton = document.getElementById("toggleButton");
+  
+  if (moreContent.style.display === "none" || moreContent.style.display === "") {
+    moreContent.style.display = "block";
+    toggleButton.textContent = "See Less";
+  } else {
+    moreContent.style.display = "none";
+    toggleButton.textContent = "See More";
+  }
+}
+        function toggleContent2() {
+  const moreContent = document.getElementById("moreContent2");
+  const toggleButton = document.getElementById("toggleButton2");
+  
+  if (moreContent.style.display === "none" || moreContent.style.display === "") {
+    moreContent.style.display = "block";
+    toggleButton.textContent = "See Less";
+  } else {
+    moreContent.style.display = "none";
+    toggleButton.textContent = "See More";
+  }
+}
+
+</script>
+{%endblock%}

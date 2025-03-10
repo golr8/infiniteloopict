@@ -1,0 +1,247 @@
+{%extends 'base.html' %}
+{% load static %}
+{% block style%} <link rel="stylesheet" href="{% static 'css/savings.css' %}">{%endblock%}
+{% block title%} Contribution Deposit{%endblock%}
+
+
+{%block content%}
+<section class="deposit-page">
+    {% include 'savings/savings-sidebar.html' %}
+    <div class="deposit">
+        <div class="toggle-div">
+            <button class="toggle" id="toggle">☰ Menu</button>
+        </div>
+        {% if cardpayment.paid %}
+            <form action="{% url 'savings:con_deposit' contribution.id %}" method="POST" id="depositForm">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="contribution_deposit">
+                <h2>Daily Contribution Deposit</h2>
+                <p><strong>Account Number:</strong> 5658510564</p>
+                <p><strong>Bank:</strong> MoniePoint MFB</p>
+                <p><strong>Name:</strong> CHENEMONA GLOBAL RESOURCES LTD - CHENEMONA GLOBAL RESOURCES</p>
+                <p>Your daily contribution goal is ₦{{ contribution.daily_savings_goal }}</p>
+                <p><strong>Note: You must use your I.D in the transaction description.</strong></p>
+                <p><strong>Your user I.D: CH000{{ request.user.id }}</strong></p>
+                <p>After 45 minutes, your transaction will be verified.</p>
+
+                <label for="amount">Amount:</label>
+                <input type="number" placeholder="Amount" name="amount" id="amount" min="{{ contribution.daily_savings_goal }}" required>
+
+                <label for="depositDays">Deposit days:</label>
+                <input type="number" placeholder="Days" name="deposit_days" id="depositDays" min="1" max="100" required>
+
+                <p id="calculatedAmount">Minimum required amount: ₦{{ contribution.daily_savings_goal }}</p>
+                <button type="submit">Deposit</button>
+            </form>
+        {% else %}
+            <div class="cardpay">
+                <form action="{% url 'savings:card_payment' %}" method="POST" id="paymentForm">
+                    {% csrf_token %}
+                    <input type="hidden" name="form_type" value="card_payment">
+                    <h2>Card Payment</h2>
+                    p><strong>Account Number:</strong> 5658510564</p>
+                <p><strong> Bank:</strong> MoniePoint MFB </p>
+                <p><strong> Name:</strong> CHENEMONA GLOBAL RESOURCES LTD - CHENEMONA GLOBAL RESOURCES</p>
+                <p>Your daily savings goal is ₦{{ savings.daily_savings_goal }}</p>
+                <p><strong>Note: You must use your I.D in transaction description.</strong></p>
+                <p> <strong>Your user I.D: CH000{{request.user.id}}.</strong></p>
+                <p>After 45 minutes your transaction will be verified.</p>
+                    <p>Make a one-time deposit of ₦500 for your card.</p>
+                    <label for="paymentAmount">Amount (₦500):</label>
+                    <input type="number" name="payment" id="paymentAmount" value="500" readonly>
+                    <button id="payCard">Deposit</button>
+                </form>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- <script src="https://js.paystack.co/v2/inline.js"> </script> -->
+<script>
+     document.addEventListener('DOMContentLoaded', function () {
+    const sidebar = document.querySelector('.sidebar');
+    const toggleButton = document.querySelector('.toggle');
+    const closeButton = document.querySelector('.close-button');
+    const depositForm = document.getElementById('depositForm');
+    const dailyGoal = {{ contribution.daily_savings_goal|safe }};
+    const depositDaysInput = document.getElementById('depositDays');
+    const amountInput = document.getElementById('amount');
+    const calculatedAmountDisplay = document.getElementById('calculatedAmount');
+
+    // Sidebar toggle functionality
+    toggleButton.addEventListener('click', () => {
+        sidebar.classList.toggle('active');
+    });
+
+    closeButton?.addEventListener('click', () => {
+        sidebar.classList.remove('active');
+    });
+
+    // Update amount based on deposit days
+    function updateAmount() {
+        let selectedDays = parseInt(depositDaysInput.value) || 1;
+
+        // Restrict value between 1 and 100
+        if (selectedDays < 1) {
+            depositDaysInput.value = 1;
+            selectedDays = 1;
+        } else if (selectedDays > 100) {
+            depositDaysInput.value = 100;
+            selectedDays = 100;
+        }
+
+        const requiredAmount = dailyGoal * selectedDays;
+        calculatedAmountDisplay.textContent = `Minimum required amount: ₦${requiredAmount.toFixed(2)}`;
+        amountInput.min = requiredAmount;
+        amountInput.value = requiredAmount;
+    }
+
+    depositDaysInput.addEventListener('input', updateAmount);
+    console.log(depositDaysInput)
+    updateAmount();
+
+//     // Handle form submission
+//     depositForm.addEventListener('submit', function (event) {
+//         event.preventDefault();
+
+//         const email = "{{ request.user.email }}";
+//         const depositDays = parseInt(depositDaysInput.value) || 1;
+//         const rawAmount = parseInt(amountInput.value) || 0;
+//         const amount = rawAmount * 100; // Convert to kobo
+
+//         // Perform validations
+//         if (depositDays < 1 || depositDays > 100) {
+//             alert('Deposit days must be between 1 and 100.');
+//             return;
+//         }
+//         if (rawAmount < dailyGoal * depositDays) {
+//             alert(`Amount must be at least ₦${(dailyGoal * depositDays).toFixed(2)}.`);
+//             return;
+//         }
+
+//         // Initiate Paystack payment
+//         payWithPaystack(email, amount, depositDays);
+//     });
+
+//     function payWithPaystack(email, amount, depositDays) {
+//     const handler = new PaystackPop();
+//     handler.checkout({
+//         key: 'pk_test_0eb471b79a27164c83ffdeb900da040e01981210', 
+//         email: email,
+//         amount: amount, 
+//         currency: 'NGN',
+//         ref: `DS_${Math.floor(Math.random() * 1000000000 + 1)}`, 
+//         onSuccess: (transaction) => {
+//             verifyTransaction(transaction.reference, amount, depositDays);
+//         },
+//         onLoad: (response) => {
+//             console.log("onLoad: ", response);
+//         },
+//         onCancel: () => {
+//             alert('Transaction was not completed.');
+//         },
+//         onError: (error) => {
+//             console.log("Error: ", error.message);
+//         }
+//     });
+// }
+
+
+//     function verifyTransaction(reference, amount, depositDays) {
+//         fetch("{% url 'savings:con_verify_transaction' %}", {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//                 'X-CSRFToken': '{{ csrf_token }}',
+//             },
+//             body: JSON.stringify({
+//                 reference: reference,
+//                 amount: amount / 100, 
+//                 deposit_days: depositDays,
+//             })
+//         })
+//         .then(response => response.json())
+//         .then(data => {
+//             if (data.success) {
+//                 alert('Deposit successful!');
+//                 window.location.href = "{% url 'savings:dashboard' %}"; 
+//             } else {
+//                 alert(data.message);
+//             }
+//         })
+//         .catch(error => {
+//             console.error('Error:', error);
+//             alert('An error occurred. Please try again.');
+//         });
+//     }
+// });
+
+// document.addEventListener('DOMContentLoaded', function () {
+//         const paymentForm = document.getElementById('paymentForm');
+//         paymentForm.addEventListener('submit', function (event) {
+//             event.preventDefault();
+            
+//             // Validate the amount
+//             const amountInput = document.getElementById('paymentAmount');
+//             const rawAmount= parseFloat(amountInput.value);
+//             if (isNaN(rawAmount) || rawAmount <= 0) {
+//                 alert('Please enter a valid amount.');
+//                 return;
+//             }
+//             const amount = rawAmount * 100
+//             const email = "{{ request.user.email }}";
+
+//             payCardPaystack(email, amount);
+//         });
+//     });
+
+//         function payCardPaystack(email, amount) {
+//             const handler = new PaystackPop();
+//             handler.checkout({
+//                 key: 'pk_test_0eb471b79a27164c83ffdeb900da040e01981210', // Replace with your public key
+//                 email: email,
+//                 amount: amount,
+//                 currency: 'NGN',
+//                 ref: `DS_${Math.floor(Math.random() * 1000000000 + 1)}`, // Generate a unique reference
+//                 onSuccess: (transaction) => {
+//                     // Call backend to verify the transaction
+//                     verifyCard(transaction.reference);
+//                 },
+//                 onLoad: (response) => {
+//                     console.log("Paystack loaded successfully:", response);
+//                 },
+//                 onCancel: () => {
+//                     alert('Transaction was not completed.');
+//                 },
+//                 onError: (error) => {
+//                     console.error("Paystack Error:", error.message);
+//                 },
+//             });
+//         }
+
+//         function verifyCard(reference) {
+//             fetch("{% url 'savings:verify_card_payment' %}", {
+//                 method: 'POST',
+//                 headers: {
+//                     'Content-Type': 'application/json',
+//                     'X-CSRFToken': '{{ csrf_token }}'
+//                 },
+//                 body: JSON.stringify({ reference: reference })
+//             })
+//                 .then(response => response.json())
+//                 .then(data => {
+//                     if (data.status === 'success') {
+//                         alert('Payment was successful!');
+//                         location.reload(); // Reload the page or redirect
+//                     } else {
+//                         alert('Payment verification failed. Please try again.');
+//                     }
+//                 })
+//                 .catch(error => {
+//                     console.error('Verification error:', error);
+//                     alert('An error occurred while verifying the transaction.');
+//                 });
+  });
+  
+</script>
+{%endblock%}

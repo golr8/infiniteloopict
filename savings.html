@@ -1,0 +1,125 @@
+{%extends 'base.html' %}
+{% load static %}
+{% block style%} <link rel="stylesheet" href="{% static 'css/savings.css' %}">{%endblock%}
+{% block title%} Savings {%endblock%}
+
+
+{%block content%}
+<main class="savings-page">
+    <section class="landing">
+        <div class="landing-text"> 
+            <h1>Save for the future, <br> Plan for a better year, </h1>
+            <p>You never know what today's efforts might bring in the future. By saving now, you can reap long term benefits, from growing a larger savings account, to establishing healthy spending habits that can be passed through your family for generations <span><a href="{% url 'privacy' %}"> Rules/Regulations</a> </span>  </p>
+            <div>
+            <a href="{% url 'savings:plans' %}"><img src="/static/images/savings-svgrepo-com.svg" alt="" width="25px" height="25px">Daily Savings</a>
+            <a href="{% url 'savings:plans' %}"><img src="/static/images/savings-svgrepo-com.svg" alt="" width="25px" height="25px"> Save for food</a></div>
+        </div>
+        <div class="land-img"> 
+           <img src="/static/images/capture-removebg-preview2.png" alt="" width="450px" height="540px">
+        </div>
+    </section>
+
+    <section class="our-packages">
+        <h2>Our Packages</h2>
+        <div class="packages">
+            <div>
+                <img src="{%static 'images/savings-svgrepo-com.svg' %}" alt="" width="40px" height="40px">
+                <h3>Daily Savings</h3>
+                <p>“Build your wealth step-by-step. Save each day for a brighter financial future. Secure your tomorrow by setting aside money today”.                                                                
+.</p>
+              <a href="{% url 'savings:plans' %}">  <button>Start saving &rArr;</button></a>
+            </div>
+            <div>
+                <img src="{% static 'images/savings-svgrepo-com.svg' %}" alt="" width="40px" height="40px">
+                <h3>Save for food items</h3>
+                <p> “Save consistently for a healthier future, set aside a portion daily to ensure food security plan ahead and enjoy stress-free meals with ease”.
+</p>
+               <a href="{% url 'savings:plans' %}"><button>Start saving &rArr;</button></a> 
+            </div>
+        </div>
+    </section>
+
+    <section class="promo">
+    </section>
+
+    <section class="faq">
+        <h2>Frequently asked questions</h2>
+        <div>
+            <article>
+                <h3>What if I decide to convert my food/items to cash?</h3>
+                <p>Ans: You will contact admin or customer care and a refund will be made without interest.</p>
+            </article>
+            <article>
+                <h3>What if I want to make withdrawal before the stipulated time?</h3>
+                <p>Ans: You cannot make withdrawal before the stipulated time, instead register for monthly Savings where 
+you can make withdrawal at any time but one day will be deducted upon withdrawal</p>
+            </article>
+        </div>
+        <div>
+            <article>
+                <h3>In the case of death, who will be the beneficiary?</h3>
+                <p>Ans: The next of kin whose detailed information is with us in the course of registration will be the 
+beneficiary.</p>
+            </article>
+            <article>
+                <h3>What if I am no longer interested in the food/ items, and I need a refund?</h3>
+                <p>Ans: It is possible within the first six months, after that you will have to wait till the end of the year.</p>
+            </article>
+        </div>
+         <div>
+            <article>
+                <h3>How do I get my food/items outside Rivers State?</h3>
+                <p>Presently, our representatives are in FCT (Abuja), Lagos, Oyo, Delta, Bayelsa, Kwara, Edo and Kogi states.</p>
+            </article>
+            <article>
+                <h3>When does registration starts/ends?</h3>
+                <p> Registration starts 2nd week of December and ends on 31st of March (Food/Items only).</p>
+            </article>
+        </div>
+<div>
+            <article>
+                <h3>How do I locate your office?</h3>
+                <p>Ans: Our office is located at No. 25 Rumuokwachi Town, beside OSPAC office, along Ozuoba-Ogbogoro 
+road</p>
+            </article>
+            <article>
+                <h3>Can you deliver items to any part of the country?</h3>
+                <p> Ans: No, we only handle delivery within Rivers State for now.</p>
+            </article>
+        </div>
+        <div>
+            <article>
+                <h3>How do I get my food/items outside Rivers State?</h3>
+                <p>Presently, our representatives are in FCT (Abuja), Lagos, Oyo, Delta, Bayelsa, Kwara, Edo and Kogi states.</p>
+            </article>
+            <article>
+                <h3>Can I pay for two (2) packages at the same time?</h3>
+                <p>Ans: No, we at Chenemona want you to be a master of one before heading to another package.</p>
+            </article>
+        </div>
+    </section>
+</main>
+<script>
+    let currentIndex = 0;
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    
+    function showSlide(index) {
+    const slidesContainer = document.querySelector('.slides');
+    const offset = -index * 100; // Offset based on the slide index
+    slidesContainer.style.transform = `translateX(${offset}%)`;
+    }
+    
+    function nextSlide() {
+    currentIndex = (currentIndex + 1) % totalSlides;
+    showSlide(currentIndex);
+    }
+    
+    // Change slide every 3 seconds
+    setInterval(nextSlide, 3000);
+    
+    
+    </script>
+    
+
+ {%endblock%}

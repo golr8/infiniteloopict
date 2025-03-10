@@ -1,0 +1,238 @@
+{%extends 'base.html' %}
+{% load static %}
+{%load humanize %}
+{% block style%} <link rel="stylesheet" href="{% static 'css/savings.css' %}">{%endblock%}
+{% block title%} Savings Dashboard{%endblock%}
+
+
+{%block content%}
+<section class="dashboard">
+ {% include 'savings/savings-sidebar.html' %}
+ <main>
+ <div class="right">
+    <div class="toggle-div"> <button class="toggle" id="toggle">☰ Menu</button></div>
+    <div class="balance">
+        <div>
+        <p>Total Savings</p>
+        <h2>&#8358;{{ total_balance|floatformat:0|intcomma}}</h2>
+        </div>
+        <div class="add-plan">
+            <a href="{% url 'savings:notifications' %}" ><img class="notifications" src="{% static 'images/notifications_FILL0_wght400_GRAD0_opsz48.svg' %}" alt="" width="30px" height="30px"></a>
+            <a href="{% url 'savings:plans' %}"> <img src="{% static 'images/add_FILL0_wght400_GRAD0_opsz48.svg' %}" alt="" width="30px" height="30px">
+        <p>Add plan</p></a>
+        
+    </div>
+    </div>
+
+    <div class="current-plans">
+        {% if savings or contribution%}
+        {%if savings%}
+        {% for savings in savings%}
+        <div class="yes-plans">
+            <h3>Daily Savings</h3>
+            <p>Save today to invest in your future. Secure your tomorrow with the little you set aside today </p>
+            <div><span>Start date:  {{savings.date_started}}</span> <span>Package: {{savings.package}}</span></div>
+            <div><span>Plan: &#8358;{{savings.daily_savings_goal}} </span> <a href="{% url 'savings:savings_deposit' savings.id %}"><span><button>Deposit</button></a></span></div>
+        </div>
+        {%endfor%}
+        {%endif%}
+        
+        {% if contribution %}
+        {% for contribution in contribution%}
+        <div class="yes-plans">
+            <h3>Daily Contribution</h3>
+            <p>We aim to simplify healthier choices for our customers by providing a diverse range of food products and services that promote good nutrition. Our belief is that good food leads to a good mood. </p>
+            <div><span>Start date: {{contribution.date_started}} </span> <span>Package: {{contribution.package}}</span></div>
+            <div><span>Plan: &#8358;{{contribution.daily_savings_goal}} </span> <span><a href="{% url 'savings:con_deposit' contribution.id %}"><button>Deposit</button></a></span></div>
+        </div>
+        {%endfor%}
+        {%endif%}
+  
+        {%else%}
+        <div class="no-plans">
+            <img src="{% static 'images/warning_FILL0_wght400_GRAD0_opsz48.svg' %}" alt="" width="160px" height="160px">
+            <p>You dont have a plan currently.</p>
+            <a href="{% url 'savings:plans' %}"><button>Add plan</button></a>
+        </div>
+        {%endif%}
+    </div>
+</div>
+
+<div class="save-cal">
+    {% if has_savings_plan %}
+    <h2>Your Savings Plans</h2>
+    {% for saving in savings %}
+        <div class="savings-calendar-container" data-savings-id="{{ saving.id }}">
+            <h3>Savings Plan</h3>
+            <div class="calendar-navigation">
+                <button class="savings-prevMonth">Previous</button>
+                <span class="savings-monthLabel">{{ currentMonthName }} {{ currentYear }}</span>
+                <button class="savings-nextMonth">Next</button>
+            </div>
+            <div class="calendar"></div>
+        </div>
+    {% endfor %}
+    {% else %}
+        <p>You have no savings plans. Please create one to use the calendar.</p>
+    {% endif %}
+
+    {% if has_contribution_plan %}
+    <h2>Your Contribution Calendar</h2>
+    {% for contribution in contribution %}
+        <div class="contribution-calendar-container" data-contribution-id="{{ contribution.id }}">
+            <div class="calendar-navigation">
+                <button class="contribution-prevMonth">Previous</button>
+                <span class="contribution-monthLabel">{{ currentMonthName }} {{ currentYear }}</span>
+                <button class="contribution-nextMonth">Next</button>
+            </div>
+            <div class="con-calendar"></div>
+        </div>
+    {% endfor %}
+    {% else %}
+        <p>You have no contribution plans. Please create one to use the calendar.</p>
+    {% endif %}
+</div>      
+    </main>
+</section>
+{% if savings %}
+    <script>
+        const savings_id = {{ savings.id }};
+    </script>
+{% else %}
+    <script>
+        const savings_id = null;
+    </script>
+{% endif %}
+
+{% if contribution %}
+    <script>
+        const contribution_id = {{ contribution.id }};
+    </script>
+{% else %}
+    <script>
+        const contribution_id = null;
+    </script>
+{% endif %}
+<script>
+    const sidebar = document.querySelector('.sidebar');
+    const toggleButton = document.querySelector('.toggle');
+    const closeButton = document.querySelector('.close-button');
+
+        toggleButton.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+
+        closeButton.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+        });
+</script>
+<script>
+ document.addEventListener('DOMContentLoaded', () => {
+    const savingsCalendars = document.querySelectorAll('.savings-calendar-container');
+    const contributionCalendars = document.querySelectorAll('.contribution-calendar-container');
+
+    const savingsFetchUrl = "{% url 'savings:sav_deposit_calendar_data' %}";
+    const contributionFetchUrl = "{% url 'savings:con_deposit_calendar_data' %}";
+
+    function initializeCalendar(container, fetchUrl, calendarClass, labelClass, prevClass, nextClass, redirectPath) {
+        const id = container.dataset.savingsId || container.dataset.contributionId;
+        const calendar = container.querySelector(calendarClass);
+        const monthLabel = container.querySelector(labelClass);
+        const prevButton = container.querySelector(prevClass);
+        const nextButton = container.querySelector(nextClass);
+
+        let currentYear = new Date().getFullYear();
+        let currentMonth = new Date().getMonth();
+
+        function loadCalendar(year, month) {
+            calendar.innerHTML = ''; // Clear previous calendar content
+
+            const startOfMonth = new Date(year, month, 1);
+            const endOfMonth = new Date(year, month + 1, 0);
+
+            // Update the month label
+            monthLabel.textContent = startOfMonth.toLocaleString('default', { month: 'long', year: 'numeric' });
+
+            // Fetch deposit dates
+            fetch(`${fetchUrl}?id=${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    const depositDates = new Set(data.deposit_dates.map(date => date)); // Use raw date strings
+
+
+                    // Render the calendar days
+                    for (let day = 1; day <= endOfMonth.getDate(); day++) {
+    const currentDay = new Date(year, month, day);
+    const dateStr = `${currentDay.getFullYear()}-${String(currentDay.getMonth() + 1).padStart(2, '0')}-${String(currentDay.getDate()).padStart(2, '0')}`;
+
+    const dayDiv = document.createElement('div');
+    dayDiv.className = depositDates.has(dateStr) ? 'day checked' : 'day unchecked';
+    dayDiv.textContent = day;
+
+    // Add click event to unchecked days
+    if (!depositDates.has(dateStr)) {
+        dayDiv.addEventListener('click', () => {
+            window.location.href = `${redirectPath}/${id}`;
+        });
+    }
+
+    calendar.appendChild(dayDiv);
+}
+
+                })
+                .catch(error => console.error(`Error fetching calendar data: ${error}`));
+        }
+
+        // Initial load for the current month
+        loadCalendar(currentYear, currentMonth);
+
+        // Event listeners for navigation buttons
+        prevButton.addEventListener('click', () => {
+            currentMonth -= 1;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear -= 1;
+            }
+            loadCalendar(currentYear, currentMonth);
+        });
+
+        nextButton.addEventListener('click', () => {
+            currentMonth += 1;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear += 1;
+            }
+            loadCalendar(currentYear, currentMonth);
+        });
+    }
+
+    // Initialize savings calendars
+    savingsCalendars.forEach(container => {
+        initializeCalendar(
+            container,
+            savingsFetchUrl,
+            '.calendar',
+            '.savings-monthLabel',
+            '.savings-prevMonth',
+            '.savings-nextMonth',
+            'savings/deposit/daily_savings'
+        );
+    });
+
+    // Initialize contribution calendars
+    contributionCalendars.forEach(container => {
+        initializeCalendar(
+            container,
+            contributionFetchUrl,
+            '.con-calendar',
+            '.contribution-monthLabel',
+            '.contribution-prevMonth',
+            '.contribution-nextMonth',
+            'savings/deposit/daily_contribution'
+        );
+    });
+});
+
+
+</script>
+{%endblock%}

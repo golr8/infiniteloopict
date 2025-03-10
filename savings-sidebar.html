@@ -1,0 +1,10 @@
+{%load static%}
+<aside class="sidebar">
+    <button class="close-button">&times</button>
+    <img src="{% static 'images/5965255789830587644.jpg' %}" alt="" width="80px" height="50px">
+    <a href="{% url 'savings:dashboard' %}"><img src="{% static 'images/space_dashboard_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg' %}" alt="" width="25px" height="25px">Dashboard</a>
+    <a href="{% url 'savings:transactions' %}"><img src="{% static 'images/currency_exchange_FILL0_wght400_GRAD0_opsz48.svg' %}" alt="" width="25px" height="25px">Transactions</a>
+    <a href="{% url 'savings:withdrawal' %}"><img src="{% static 'images/account_balance_wallet_FILL0_wght400_GRAD0_opsz48.svg' %}" alt="" width="25px" height="25px">Witdrawal</a>
+    <a href="{% url 'myaccount' %}"><img src="{% static 'images/manage_accounts_FILL0_wght400_GRAD0_opsz48.svg' %}" alt="" width="25px" height="25px">My Account</a>
+    <a href="{% url 'accounts:logout' %}"><img src="{% static 'images/login_FILL0_wght400_GRAD0_opsz48.svg' %}" alt="" width="25px" height="25px">Log Out</a>
+</aside>
